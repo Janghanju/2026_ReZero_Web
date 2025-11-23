@@ -4,6 +4,7 @@ import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { Check, Code, Globe, Smartphone, Zap, Brain, Cloud, Database, Palette, Shield } from "lucide-react";
 import { useTranslations } from 'next-intl';
 import { MotionCard } from "@/components/ui/motion-card";
+import { MotionContainer } from "@/components/ui/motion-container";
 
 export default function ServicesPage() {
     const t = useTranslations('Services');
@@ -29,9 +30,9 @@ export default function ServicesPage() {
                     <h1 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '1rem', background: 'linear-gradient(to right, var(--primary), var(--accent))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{t('title')}</h1>
                     <p style={{ color: 'var(--muted-foreground)', fontSize: '1.2rem' }}>{t('subtitle')}</p>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+                <MotionContainer style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
                     {services.map((svc, idx) => (
-                        <MotionCard key={idx} index={idx}>
+                        <MotionCard key={idx}>
                             <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '2rem', transition: 'transform 0.3s ease, border-color 0.3s ease', height: '100%' }}
                                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.borderColor = svc.color; }}
                                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'var(--border)'; }}>
@@ -46,7 +47,7 @@ export default function ServicesPage() {
                             </div>
                         </MotionCard>
                     ))}
-                </div>
+                </MotionContainer>
             </main>
         </div>
     );

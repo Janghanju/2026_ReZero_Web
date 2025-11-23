@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { ExternalLink, Github } from "lucide-react";
 import Link from "next/link";
 import { MotionCard } from "@/components/ui/motion-card";
+import { MotionContainer } from "@/components/ui/motion-container";
 
 export default function PortfolioPage() {
     const t = useTranslations('Portfolio');
@@ -98,13 +99,13 @@ export default function PortfolioPage() {
                     </p>
                 </div>
 
-                <div style={{
+                <MotionContainer style={{
                     display: 'grid',
                     gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
                     gap: '2rem'
                 }}>
                     {projects.map((project, index) => (
-                        <MotionCard key={index} index={index}>
+                        <MotionCard key={index}>
                             <div style={{
                                 background: 'var(--card)',
                                 border: '1px solid var(--border)',
@@ -167,7 +168,7 @@ export default function PortfolioPage() {
                             </div>
                         </MotionCard>
                     ))}
-                </div>
+                </MotionContainer>
             </main>
         </div>
     );

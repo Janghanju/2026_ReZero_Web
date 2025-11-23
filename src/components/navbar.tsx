@@ -14,9 +14,11 @@ export function Navbar() {
 
     const navItems = [
         { name: t('home'), href: '/' },
+        { name: t('about'), href: '/about' },
         { name: t('services'), href: '/services' },
         { name: t('portfolio'), href: '/portfolio' },
         { name: t('news'), href: '/news' },
+        { name: t('contact'), href: '/contact' },
     ];
 
     const toggleLocale = () => {

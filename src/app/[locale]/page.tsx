@@ -5,6 +5,7 @@ import { ArrowRight, Code, Globe, Zap, Newspaper, CheckCircle, Brain, Cloud, Git
 import { Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import { MotionCard } from "@/components/ui/motion-card";
+import { MotionContainer } from "@/components/ui/motion-container";
 
 export default function Home() {
   const t = useTranslations('Home');
@@ -57,9 +58,9 @@ export default function Home() {
       {/* Services Preview */}
       <section className={styles.services}>
         <h2 className={styles.sectionTitle}>{t('servicesTitle')}</h2>
-        <div className={styles.serviceGrid}>
+        <MotionContainer className={styles.serviceGrid}>
           {services.map((service, index) => (
-            <MotionCard key={index} index={index}>
+            <MotionCard key={index}>
               <div className={styles.serviceCard}>
                 {service.icon}
                 <h3>{service.title}</h3>
@@ -67,7 +68,7 @@ export default function Home() {
               </div>
             </MotionCard>
           ))}
-        </div>
+        </MotionContainer>
       </section>
 
       {/* News CTA */}

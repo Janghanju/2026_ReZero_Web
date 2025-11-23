@@ -1,5 +1,26 @@
 {
-    "services": {
+    "Navbar": {
+        "home": "Home",
+        "about": "About Me",
+        "services": "Services",
+        "portfolio": "Portfolio",
+        "news": "News",
+        "contact": "Contact",
+        "login": "Login"
+    },
+    "Home": {
+        "heroTitle": "Building the Future with Code",
+        "heroSubtitle": "Full-stack development, embedded systems, and AI solutions.",
+        "getStarted": "Get Started",
+        "viewPortfolio": "View Portfolio",
+        "servicesTitle": "Our Services",
+        "newsTitle": "Latest News"
+    },
+    "Portfolio": {
+        "title": "My Portfolio",
+        "desc": "A collection of my projects and experiments."
+    },
+    "Services": {
         "title": "Our Services",
         "subtitle": "Premium embedded development solutions",
         "firmwareTitle": "Firmware Development",
@@ -48,13 +69,27 @@
         "asicFeature2": "Simulation & verification",
         "asicFeature3": "Prototype testing"
     },
-    "contact": {
+    "Contact": {
         "title": "Contact Me",
         "subtitle": "Get in touch for collaborations or inquiries.",
         "email": "Email",
         "phone": "Phone",
         "github": "GitHub",
         "linkedin": "LinkedIn",
-        "bio": "Embedded systems engineer with a passion for creating reliable, high‑performance firmware."
+        "bio": "Embedded systems engineer with a passion for creating reliable, high‑performance firmware.",
+        "address": "Address",
+        "addressValue": "Seoul, South Korea"
+    },
+    "About": {
+        "title": "About Me",
+        "subtitle": "Passionate Developer & Engineer",
+        "introTitle": "Introduction",
+        "intro": "I am a full-stack developer with a background in embedded systems. I love building things that live on the internet and in the physical world.",
+        "experience": "Experience",
+        "skills": "Skills",
+        "job1Title": "Senior Embedded Engineer",
+        "job1Company": "Tech Corp (2020 - Present)",
+        "job2Title": "Firmware Developer",
+        "job2Company": "IoT Solutions (2018 - 2020)"
     }
 }
