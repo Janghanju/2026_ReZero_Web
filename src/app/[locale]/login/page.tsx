@@ -53,7 +53,7 @@ export default function LoginPage() {
             <div className={styles.card}>
                 <div className={styles.header}>
                     <Link href="/" className={styles.logo}>
-                        Re:Zero
+                        One Week
                     </Link>
                     <h1 className={styles.title}>Welcome Back</h1>
                     <p className={styles.subtitle}>Sign in to continue to your account</p>

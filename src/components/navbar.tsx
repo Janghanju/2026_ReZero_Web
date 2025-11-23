@@ -44,7 +44,7 @@ export function Navbar() {
                 alignItems: 'center'
             }}>
                 <Link href="/" style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--foreground)' }}>
-                    Re:Zero
+                    One Week
                 </Link>
 
                 {/* Desktop Nav */}

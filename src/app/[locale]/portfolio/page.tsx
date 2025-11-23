@@ -8,7 +8,7 @@ export default function PortfolioPage() {
 
     const projects = [
         {
-            title: "Re:Zero Web",
+            title: "One Week Web",
             desc: "Next.js 14 Portfolio & News Aggregator",
             tags: ["Next.js", "TypeScript", "NextAuth", "i18n"],
             link: "#",
