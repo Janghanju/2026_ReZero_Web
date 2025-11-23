@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/navbar";
+import { AnimatedBackground } from "@/components/AnimatedBackground";
 import styles from "./home.module.css";
-import { ArrowRight, Code, Globe, Zap, Newspaper, CheckCircle } from "lucide-react";
+import { ArrowRight, Code, Globe, Zap, Newspaper, CheckCircle, Brain, Cloud, GitBranch } from "lucide-react";
 import { Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 
@@ -9,6 +10,7 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
+      <AnimatedBackground />
       <Navbar />
 
       {/* Hero Section */}
@@ -57,6 +59,21 @@ export default function Home() {
             <CheckCircle size={32} className={styles.serviceIcon} />
             <h3>Tech Consulting</h3>
             <p>Expert advice on your tech stack and architecture.</p>
+          </div>
+          <div className={styles.serviceCard}>
+            <Brain size={32} className={styles.serviceIcon} />
+            <h3>AI/ML Solutions</h3>
+            <p>Intelligent systems powered by machine learning.</p>
+          </div>
+          <div className={styles.serviceCard}>
+            <Cloud size={32} className={styles.serviceIcon} />
+            <h3>Cloud Infrastructure</h3>
+            <p>Scalable cloud solutions on AWS, Azure, and GCP.</p>
+          </div>
+          <div className={styles.serviceCard}>
+            <GitBranch size={32} className={styles.serviceIcon} />
+            <h3>DevOps & CI/CD</h3>
+            <p>Automated deployment pipelines and infrastructure.</p>
           </div>
         </div>
       </section>

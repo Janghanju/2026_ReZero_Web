@@ -1,4 +1,7 @@
+'use client';
+
 import { Navbar } from "@/components/navbar";
+import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { useTranslations } from 'next-intl';
 import { ExternalLink, Github } from "lucide-react";
 import Link from "next/link";
@@ -27,14 +30,43 @@ export default function PortfolioPage() {
             tags: ["Vue.js", "Firebase", "Tailwind"],
             link: "#",
             github: "#"
+        },
+        {
+            title: "Real-time Analytics Platform",
+            desc: "Live data visualization and business intelligence dashboard",
+            tags: ["React", "D3.js", "WebSocket", "Node.js"],
+            link: "#",
+            github: "#"
+        },
+        {
+            title: "Blockchain Wallet App",
+            desc: "Secure cryptocurrency wallet with multi-chain support",
+            tags: ["React Native", "Web3.js", "Ethereum", "Solana"],
+            link: "#",
+            github: "#"
+        },
+        {
+            title: "IoT Monitoring System",
+            desc: "Real-time sensor data collection and analysis platform",
+            tags: ["Python", "MQTT", "InfluxDB", "Grafana"],
+            link: "#",
+            github: "#"
+        },
+        {
+            title: "Social Media Dashboard",
+            desc: "Unified analytics for multiple social media platforms",
+            tags: ["Next.js", "GraphQL", "PostgreSQL", "Redis"],
+            link: "#",
+            github: "#"
         }
     ];
 
     return (
-        <div style={{ minHeight: '100vh', background: 'var(--background)', color: 'var(--foreground)' }}>
+        <div style={{ minHeight: '100vh', background: 'var(--background)', color: 'var(--foreground)', position: 'relative' }}>
+            <AnimatedBackground />
             <Navbar />
 
-            <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '8rem 2rem 4rem' }}>
+            <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '8rem 2rem 4rem', position: 'relative', zIndex: 1 }}>
                 <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
                     <h1 style={{
                         fontSize: '3rem',
@@ -62,9 +94,15 @@ export default function PortfolioPage() {
                             border: '1px solid var(--border)',
                             borderRadius: 'var(--radius)',
                             overflow: 'hidden',
-                            transition: 'transform 0.3s ease',
+                            transition: 'transform 0.3s ease, border-color 0.3s ease',
                             display: 'flex',
                             flexDirection: 'column'
+                        }} onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-5px)';
+                            e.currentTarget.style.borderColor = 'var(--primary)';
+                        }} onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.borderColor = 'var(--border)';
                         }}>
                             <div style={{
                                 height: '200px',
