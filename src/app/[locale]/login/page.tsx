@@ -44,6 +44,10 @@ export default function LoginPage() {
         signIn('github', { callbackUrl: '/' });
     };
 
+    const handleGoogleLogin = () => {
+        signIn('google', { callbackUrl: '/' });
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.card}>
@@ -120,6 +124,14 @@ export default function LoginPage() {
                 >
                     <Github size={20} />
                     Continue with GitHub
+                </button>
+
+                <button
+                    onClick={handleGoogleLogin}
+                    className={styles.googleBtn}
+                >
+                    <Mail size={20} />
+                    Continue with Google
                 </button>
 
                 <p className={styles.demoHint}>

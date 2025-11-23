@@ -201,6 +201,29 @@
     transform: translateY(-2px);
 }
 
+.googleBtn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: var(--foreground);
+    margin-top: 0.75rem;
+}
+
+.googleBtn:hover {
+    background: var(--muted);
+    border-color: #4285f4;
+    transform: translateY(-2px);
+}
+
 .demoHint {
     margin-top: 2rem;
     padding: 1rem;
