@@ -5,7 +5,14 @@ const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   output: 'standalone',
-  /* config options here */
+  async rewrites() {
+    return [
+      {
+        source: '/api/nest/:path*',
+        destination: 'http://localhost:3001/:path*',
+      },
+    ];
+  },
 };
 
 export default withNextIntl(nextConfig);

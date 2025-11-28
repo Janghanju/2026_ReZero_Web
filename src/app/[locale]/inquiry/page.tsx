@@ -34,10 +34,12 @@ export default function InquiryPage() {
     }, [status, router]);
 
     const fetchInquiries = async () => {
-        const res = await fetch("/api/inquiry");
+        const res = await fetch("/api/nest/inquiry", {
+            credentials: 'include'
+        });
         if (res.ok) {
             const data = await res.json();
-            setInquiries(data.inquiries || []);
+            setInquiries(data || []);
         }
     };
 
@@ -45,10 +47,11 @@ export default function InquiryPage() {
         e.preventDefault();
         setLoading(true);
         try {
-            const res = await fetch("/api/inquiry", {
+            const res = await fetch("/api/nest/inquiry", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title, content, isPrivate: true })
+                body: JSON.stringify({ title, content, isPrivate: true }),
+                credentials: 'include'
             });
             if (res.ok) {
                 setTitle("");

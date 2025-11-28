@@ -28,8 +28,12 @@ export function NewsList() {
     const fetchNews = async (pageNum: number, isAutoRefresh = false) => {
         if (!isAutoRefresh) setLoading(true);
         try {
-            const res = await fetch(`/api/news?page=${pageNum}`);
-            if (!res.ok) throw new Error('Failed to fetch');
+            const res = await fetch(`/api/nest/news?page=${pageNum}`);
+            if (!res.ok) {
+                const text = await res.text();
+                console.error('News fetch failed:', text);
+                throw new Error('Failed to fetch news');
+            }
             const data = await res.json();
             setNews(data.news || []);
             setLastUpdated(new Date());

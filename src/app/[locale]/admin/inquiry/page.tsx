@@ -41,19 +41,22 @@ export default function AdminInquiryPage() {
     }, [status, session, router]);
 
     const fetchInquiries = async () => {
-        const res = await fetch("/api/admin/inquiry");
+        const res = await fetch("/api/nest/inquiry/admin", {
+            credentials: 'include'
+        });
         if (res.ok) {
             const data = await res.json();
-            setInquiries(data.inquiries || []);
+            setInquiries(data || []);
         }
     };
 
     const handleAnswer = async (id: string) => {
         try {
-            const res = await fetch("/api/admin/inquiry", {
+            const res = await fetch(`/api/nest/inquiry/admin/${id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ id, answer: answerText })
+                body: JSON.stringify({ answer: answerText }),
+                credentials: 'include'
             });
             if (res.ok) {
                 alert("답변이 등록되었습니다.");
