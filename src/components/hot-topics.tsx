@@ -16,7 +16,7 @@ export function HotTopics() {
     const t = useTranslations('News');
 
     useEffect(() => {
-        fetch('/api/nest/click-log/hot-topics')
+        fetch('/api/click-log/top?limit=5')
             .then(res => res.json())
             .then(data => setTopics(data.topics || []))
             .catch(err => console.error(err));

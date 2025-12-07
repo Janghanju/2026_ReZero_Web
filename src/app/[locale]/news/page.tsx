@@ -1,5 +1,5 @@
 import React from 'react';
-import { NewsList } from '@/components/news-list';
+import NewsList from '@/components/news-list';
 import { HotTopics } from '@/components/hot-topics';
 import styles from './news.module.css';
 import { Navbar } from "@/components/navbar";

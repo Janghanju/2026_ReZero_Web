@@ -3,7 +3,7 @@
     margin: 0 auto;
     padding: 6rem 2rem 2rem;
     display: grid;
-    grid-template-columns: 300px 1fr;
+    grid-template-columns: 260px 1fr;
     gap: 2rem;
 }
 
@@ -21,6 +21,7 @@
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(59, 130, 246, 0.2);
 }
 
 .subtitle {
@@ -29,10 +30,13 @@
 }
 
 .trendingBox {
-    background: var(--card);
-    border: 1px solid var(--border);
+    background: rgba(30, 30, 30, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--radius);
-    padding: 1.5rem;
+    padding: 1.25rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .trendingHeader {
@@ -42,15 +46,25 @@
     margin-bottom: 1rem;
     font-weight: 700;
     color: var(--foreground);
+    font-size: 1rem;
 }
 
 .trendingItem {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 0.9rem;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.85rem;
+    transition: background 0.2s;
+}
+
+.trendingItem:hover {
+    background: rgba(255, 255, 255, 0.05);
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    border-radius: 4px;
+    margin: 0 -0.5rem;
 }
 
 .trendingItem:last-child {
@@ -58,19 +72,20 @@
 }
 
 .trendingRank {
-    font-weight: 700;
+    font-weight: 800;
     color: var(--primary);
-    width: 20px;
+    width: 18px;
+    font-size: 0.9rem;
 }
 
 .trendingKeyword {
     flex: 1;
     color: var(--foreground);
+    font-weight: 500;
 }
 
 .main {
     min-width: 0;
-    /* Prevent overflow */
 }
 
 .feed {
@@ -80,17 +95,20 @@
 }
 
 .card {
-    background: var(--card);
-    border: 1px solid var(--border);
+    background: rgba(30, 30, 30, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--radius);
     padding: 1.5rem;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3);
     border-color: var(--primary);
+    background: rgba(30, 30, 30, 0.6);
 }
 
 .cardHeader {
@@ -127,14 +145,15 @@
 .sourceTag {
     font-size: 0.75rem;
     padding: 0.25rem 0.75rem;
-    background: rgba(var(--primary-rgb), 0.1);
+    background: rgba(59, 130, 246, 0.1);
     color: var(--primary);
     border-radius: 999px;
     font-weight: 600;
+    border: 1px solid rgba(59, 130, 246, 0.2);
 }
 
 .summary {
-    background: var(--muted);
+    background: rgba(0, 0, 0, 0.2);
     padding: 1rem;
     border-radius: var(--radius);
     font-size: 0.9rem;
@@ -146,7 +165,7 @@
 .cardFooter {
     display: flex;
     gap: 1rem;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
     padding-top: 1rem;
 }
 
@@ -174,14 +193,19 @@
 
 .pageBtn {
     padding: 0.5rem;
-    border: 1px solid var(--border);
-    background: var(--card);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
     border-radius: var(--radius);
     cursor: pointer;
     color: var(--foreground);
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.2s;
+}
+
+.pageBtn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .pageBtn:disabled {
@@ -204,7 +228,6 @@
         position: static;
         height: auto;
         order: -1;
-        /* Show sidebar (hot topics) on top on mobile? Or bottom? Let's keep it top or maybe hide? */
-        /* Usually hot topics are good on top */
+        margin-bottom: 2rem;
     }
 }

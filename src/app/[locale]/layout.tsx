@@ -11,6 +11,15 @@ export const metadata: Metadata = {
   description: "One Week - A premium portfolio and tech news aggregation service.",
 };
 
+import '@mantine/core/styles.css';
+import { ColorSchemeScript, MantineProvider, createTheme } from '@mantine/core';
+
+const theme = createTheme({
+  /** Put your mantine theme override here */
+  primaryColor: 'blue',
+  defaultRadius: 'md',
+});
+
 export default async function RootLayout({
   children,
   params
@@ -23,10 +32,15 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
+      <head>
+        <ColorSchemeScript defaultColorScheme="dark" />
+      </head>
       <body className={inter.className}>
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
+        <MantineProvider theme={theme} defaultColorScheme="dark">
+          <NextIntlClientProvider messages={messages}>
+            {children}
+          </NextIntlClientProvider>
+        </MantineProvider>
       </body>
     </html>
   );

@@ -1,154 +1,135 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Container, Title, Paper, Table, Badge, Button, Modal, Textarea, Group, Text } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { Navbar } from "@/components/navbar";
-import { AnimatedBackground } from "@/components/AnimatedBackground";
-import { MotionContainer } from "@/components/ui/motion-container";
-import { MotionCard } from "@/components/ui/motion-card";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 
 interface Inquiry {
     id: string;
     title: string;
     content: string;
-    answer?: string;
+    answer: string | null;
+    isPrivate: boolean;
     createdAt: string;
     user: {
-        name: string | null;
+        name: string;
         email: string;
     };
 }
 
 export default function AdminInquiryPage() {
-    const { data: session, status } = useSession();
-    const router = useRouter();
     const [inquiries, setInquiries] = useState<Inquiry[]>([]);
-    const [answeringId, setAnsweringId] = useState<string | null>(null);
-    const [answerText, setAnswerText] = useState("");
-
-    useEffect(() => {
-        if (status === "unauthenticated") {
-            router.push("/login");
-        } else if (status === "authenticated") {
-            if (session?.user?.role !== "ADMIN") {
-                alert("관리자 권한이 필요합니다.");
-                router.push("/");
-            } else {
-                fetchInquiries();
-            }
-        }
-    }, [status, session, router]);
+    const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
+    const [answer, setAnswer] = useState('');
+    const [opened, { open, close }] = useDisclosure(false);
 
     const fetchInquiries = async () => {
-        const res = await fetch("/api/nest/inquiry/admin", {
-            credentials: 'include'
-        });
-        if (res.ok) {
-            const data = await res.json();
-            setInquiries(data || []);
-        }
-    };
-
-    const handleAnswer = async (id: string) => {
         try {
-            const res = await fetch(`/api/nest/inquiry/admin/${id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ answer: answerText }),
-                credentials: 'include'
-            });
+            const res = await fetch('/api/nest/admin/inquiries');
             if (res.ok) {
-                alert("답변이 등록되었습니다.");
-                setAnsweringId(null);
-                setAnswerText("");
-                fetchInquiries();
-            } else {
-                alert("답변 등록 실패");
+                const data = await res.json();
+                setInquiries(data);
             }
-        } catch (err) {
-            console.error(err);
+        } catch (error) {
+            console.error('Failed to fetch inquiries', error);
         }
     };
 
-    if (status === "loading") return <div>Loading...</div>;
+    useEffect(() => {
+        fetchInquiries();
+    }, []);
+
+    const handleOpenAnswer = (inquiry: Inquiry) => {
+        setSelectedInquiry(inquiry);
+        setAnswer(inquiry.answer || '');
+        open();
+    };
+
+    const handleSubmitAnswer = async () => {
+        if (!selectedInquiry) return;
+
+        try {
+            const res = await fetch(`/api/nest/admin/inquiries/${selectedInquiry.id}/answer`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ answer }),
+            });
+
+            if (res.ok) {
+                close();
+                fetchInquiries(); // Refresh list
+            } else {
+                alert('Failed to submit answer');
+            }
+        } catch (error) {
+            console.error('Error submitting answer', error);
+        }
+    };
 
     return (
-        <div style={{ minHeight: '100vh', background: 'var(--background)', color: 'var(--foreground)', position: 'relative' }}>
-            <AnimatedBackground />
+        <div style={{ minHeight: '100vh', background: '#1a1b1e' }}>
             <Navbar />
+            <Container size="xl" py="xl" style={{ paddingTop: '100px' }}>
+                <Title order={2} mb="lg" c="white">Admin Inquiry Management</Title>
+                <Paper p="md" radius="md" withBorder>
+                    <Table>
+                        <Table.Thead>
+                            <Table.Tr>
+                                <Table.Th>Status</Table.Th>
+                                <Table.Th>Title</Table.Th>
+                                <Table.Th>User</Table.Th>
+                                <Table.Th>Date</Table.Th>
+                                <Table.Th>Action</Table.Th>
+                            </Table.Tr>
+                        </Table.Thead>
+                        <Table.Tbody>
+                            {inquiries.map((inquiry) => (
+                                <Table.Tr key={inquiry.id}>
+                                    <Table.Td>
+                                        <Badge color={inquiry.answer ? 'green' : 'yellow'}>
+                                            {inquiry.answer ? 'Answered' : 'Pending'}
+                                        </Badge>
+                                    </Table.Td>
+                                    <Table.Td>{inquiry.title}</Table.Td>
+                                    <Table.Td>
+                                        <Text size="sm">{inquiry.user?.name}</Text>
+                                        <Text size="xs" c="dimmed">{inquiry.user?.email}</Text>
+                                    </Table.Td>
+                                    <Table.Td>{new Date(inquiry.createdAt).toLocaleDateString()}</Table.Td>
+                                    <Table.Td>
+                                        <Button size="xs" onClick={() => handleOpenAnswer(inquiry)}>
+                                            {inquiry.answer ? 'Edit Answer' : 'Answer'}
+                                        </Button>
+                                    </Table.Td>
+                                </Table.Tr>
+                            ))}
+                        </Table.Tbody>
+                    </Table>
+                </Paper>
+            </Container>
 
-            <main style={{ maxWidth: '1000px', margin: '0 auto', padding: '8rem 2rem 4rem', position: 'relative', zIndex: 1 }}>
-                <h1 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '2rem', textAlign: 'center' }}>관리자 문의 관리</h1>
-
-                <MotionContainer>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        {inquiries.map(inquiry => (
-                            <MotionCard key={inquiry.id}>
-                                <div style={{ padding: '1.5rem', background: 'var(--card)', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', alignItems: 'center' }}>
-                                        <div>
-                                            <h3 style={{ fontWeight: 700, fontSize: '1.2rem' }}>{inquiry.title}</h3>
-                                            <div style={{ fontSize: '0.85rem', color: 'var(--muted-foreground)' }}>
-                                                작성자: {inquiry.user.name || inquiry.user.email} ({inquiry.user.email})
-                                            </div>
-                                        </div>
-                                        <span style={{ fontSize: '0.8rem', color: 'var(--muted-foreground)' }}>
-                                            {new Date(inquiry.createdAt).toLocaleString()}
-                                        </span>
-                                    </div>
-
-                                    <div style={{ background: 'var(--background)', padding: '1rem', borderRadius: 'var(--radius)', marginBottom: '1rem', border: '1px solid var(--border)' }}>
-                                        {inquiry.content}
-                                    </div>
-
-                                    {inquiry.answer ? (
-                                        <div style={{ background: 'rgba(var(--primary-rgb), 0.1)', padding: '1rem', borderRadius: 'var(--radius)' }}>
-                                            <div style={{ fontWeight: 600, color: 'var(--primary)', marginBottom: '0.5rem' }}>답변 완료</div>
-                                            <p>{inquiry.answer}</p>
-                                        </div>
-                                    ) : (
-                                        <div>
-                                            {answeringId === inquiry.id ? (
-                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                                    <textarea
-                                                        value={answerText}
-                                                        onChange={e => setAnswerText(e.target.value)}
-                                                        rows={4}
-                                                        style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)', background: 'var(--background)', color: 'var(--foreground)' }}
-                                                        placeholder="답변을 입력하세요..."
-                                                    />
-                                                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                                        <button
-                                                            onClick={() => handleAnswer(inquiry.id)}
-                                                            style={{ padding: '0.5rem 1rem', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: 'var(--radius)', cursor: 'pointer' }}
-                                                        >
-                                                            등록
-                                                        </button>
-                                                        <button
-                                                            onClick={() => setAnsweringId(null)}
-                                                            style={{ padding: '0.5rem 1rem', background: 'var(--muted)', color: 'var(--foreground)', border: 'none', borderRadius: 'var(--radius)', cursor: 'pointer' }}
-                                                        >
-                                                            취소
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                <button
-                                                    onClick={() => { setAnsweringId(inquiry.id); setAnswerText(""); }}
-                                                    style={{ padding: '0.5rem 1rem', background: 'var(--accent)', color: 'white', border: 'none', borderRadius: 'var(--radius)', cursor: 'pointer' }}
-                                                >
-                                                    답변하기
-                                                </button>
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
-                            </MotionCard>
-                        ))}
-                    </div>
-                </MotionContainer>
-            </main>
+            <Modal opened={opened} onClose={close} title="Answer Inquiry" size="lg">
+                {selectedInquiry && (
+                    <>
+                        <Paper p="sm" bg="gray.1" mb="md">
+                            <Text fw={700}>{selectedInquiry.title}</Text>
+                            <Text size="sm" mt="xs">{selectedInquiry.content}</Text>
+                        </Paper>
+                        <Textarea
+                            label="Your Answer"
+                            placeholder="Type your response here..."
+                            minRows={5}
+                            value={answer}
+                            onChange={(e) => setAnswer(e.currentTarget.value)}
+                        />
+                        <Group justify="flex-end" mt="md">
+                            <Button variant="default" onClick={close}>Cancel</Button>
+                            <Button onClick={handleSubmitAnswer}>Submit Answer</Button>
+                        </Group>
+                    </>
+                )}
+            </Modal>
         </div>
     );
 }

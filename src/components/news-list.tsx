@@ -1,45 +1,80 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { NewsItem } from '@/lib/crawler';
-import { NewsCard } from './news-card';
-import styles from '@/app/[locale]/news/news.module.css';
-import { RefreshCw, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
-import { MotionContainer } from './ui/motion-container';
-import { MotionCard } from './ui/motion-card';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
+import { motion } from 'framer-motion';
+import {
+    ExternalLink,
+    Clock,
+    AlertCircle,
+    RefreshCw,
+} from 'lucide-react';
+import {
+    Card,
+    Text,
+    Badge,
+    Button,
+    Group,
+    Grid,
+    Skeleton,
+    Alert,
+    Container,
+} from '@mantine/core';
 
-export function NewsList() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const currentPage = parseInt(searchParams.get('page') || '1', 10);
+interface NewsItem {
+    id: string;
+    title: string;
+    link: string;
+    source?: string;
+    timeAgo?: string;
+    summary?: string;
+}
 
+export default function NewsList() {
+    const t = useTranslations('News');
     const [news, setNews] = useState<NewsItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
-    const [page, setPage] = useState(currentPage);
+    const [page, setPage] = useState(1);
+    const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-    // Sync page state with URL
-    useEffect(() => {
-        setPage(currentPage);
-    }, [currentPage]);
+    // Click log function
+    const logClick = useCallback(async (title: string, url: string) => {
+        try {
+            await fetch('/api/click-log', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ keyword: title, url }),
+            });
+        } catch (e) {
+            console.warn('Click log failed', e);
+        }
+    }, []);
 
     const fetchNews = async (pageNum: number, isAutoRefresh = false) => {
         if (!isAutoRefresh) setLoading(true);
+        setError(null);
         try {
-            const res = await fetch(`/api/nest/news?page=${pageNum}`);
-            if (!res.ok) {
-                const text = await res.text();
-                console.error('News fetch failed:', text);
-                throw new Error('Failed to fetch news');
+            const res = await fetch(`/api/geek-news?page=${pageNum}`);
+
+            const contentType = res.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                const txt = await res.text();
+                console.error('Received non-JSON response:', txt.substring(0, 200)); // Log first 200 chars
+                throw new Error('Server returned unexpected response (not JSON). Please try again later.');
             }
+
+            if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data.details || data.error || 'Failed to fetch news');
+            }
+
             const data = await res.json();
             setNews(data.news || []);
             setLastUpdated(new Date());
-        } catch (err) {
-            console.error(err);
-            setError('뉴스를 불러오는데 실패했습니다.');
+        } catch (err: any) {
+            console.error('Fetch error:', err);
+            setError(err.message || 'Failed to load news.');
         } finally {
             setLoading(false);
         }
@@ -47,104 +82,99 @@ export function NewsList() {
 
     useEffect(() => {
         fetchNews(page);
-
-        // Auto refresh every 60 seconds
-        const interval = setInterval(() => {
-            fetchNews(page, true);
-        }, 60000);
-
+        const interval = setInterval(() => fetchNews(page, true), 5 * 60 * 1000);
         return () => clearInterval(interval);
     }, [page]);
 
-    const handleTrackClick = async (keyword: string, url: string) => {
-        try {
-            await fetch('/api/track-click', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ keyword, url })
-            });
-        } catch (err) {
-            console.error('Failed to track click', err);
-        }
-    };
-
-    const goToPage = (newPage: number) => {
-        if (newPage < 1) return;
-        router.push(`/news?page=${newPage}`);
-    };
-
-    if (loading && news.length === 0) {
-        return <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--muted-foreground)' }}>뉴스 불러오는 중...</div>;
-    }
-
-    if (error) {
-        return <div style={{ padding: '2rem', textAlign: 'center', color: 'red' }}>{error}</div>;
-    }
+    const handleNextPage = () => setPage((p) => p + 1);
+    const handlePrevPage = () => setPage((p) => Math.max(1, p - 1));
 
     return (
-        <div className={styles.feed}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <span style={{ fontSize: '0.85rem', color: 'var(--muted-foreground)' }}>
-                    마지막 업데이트: {lastUpdated.toLocaleTimeString()}
-                </span>
-                <button
+        <Container size="xl" py="xl">
+            <Group justify="space-between" mb="lg">
+                <Text size="sm" c="dimmed">
+                    {lastUpdated && `${t('lastUpdated')}: ${lastUpdated.toLocaleTimeString()}`}
+                </Text>
+                <Button
+                    variant="light"
+                    leftSection={<RefreshCw size={16} />}
                     onClick={() => fetchNews(page)}
-                    style={{
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        color: 'var(--primary)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem'
-                    }}
+                    loading={loading}
                 >
-                    <RefreshCw size={14} /> 새로고침
-                </button>
-            </div>
+                    {t('refresh')}
+                </Button>
+            </Group>
 
-            <MotionContainer>
-                {news.map((item) => (
-                    <MotionCard key={item.id}>
-                        <NewsCard item={item} onTrackClick={handleTrackClick} />
-                    </MotionCard>
-                ))}
-            </MotionContainer>
+            {error ? (
+                <Alert icon={<AlertCircle size={16} />} title="Connection Error" color="red" variant="filled">
+                    {error}
+                </Alert>
+            ) : (
+                <Grid>
+                    {loading && news.length === 0
+                        ? Array(6)
+                            .fill(0)
+                            .map((_, i) => (
+                                <Grid.Col key={i} span={{ base: 12, md: 6, lg: 4 }}>
+                                    <Skeleton height={200} radius="md" />
+                                </Grid.Col>
+                            ))
+                        : news.map((item, idx) => (
+                            <Grid.Col key={item.id || idx} span={{ base: 12, md: 6, lg: 4 }}>
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.3, delay: idx * 0.1 }}
+                                >
+                                    <Card shadow="sm" padding="lg" radius="md" withBorder h="100%" style={{ display: 'flex', flexDirection: 'column' }}>
+                                        <Group justify="space-between" mt="md" mb="xs">
+                                            <Badge color="pink" variant="light">
+                                                {item.source || 'News'}
+                                            </Badge>
+                                            <Group gap={4}>
+                                                <Clock size={14} color="gray" />
+                                                <Text size="xs" c="dimmed">
+                                                    {item.timeAgo}
+                                                </Text>
+                                            </Group>
+                                        </Group>
 
-            <div className={styles.pagination}>
-                {/* First page button - only show if not on page 1 */}
-                {page > 1 && (
-                    <button
-                        onClick={() => goToPage(1)}
-                        className={styles.pageBtn}
-                        title="첫 페이지"
-                    >
-                        <ChevronsLeft size={16} />
-                    </button>
-                )}
+                                        <Text fw={500} size="lg" mt="md" style={{ flex: 1 }}>
+                                            {item.title}
+                                        </Text>
 
-                {/* Previous page button - only show if not on page 1 */}
-                {page > 1 && (
-                    <button
-                        onClick={() => goToPage(page - 1)}
-                        className={styles.pageBtn}
-                        title="이전 페이지"
-                    >
-                        <ChevronLeft size={16} />
-                    </button>
-                )}
+                                        <Button
+                                            component="a"
+                                            href={item.link}
+                                            target="_blank"
+                                            variant="light"
+                                            color="blue"
+                                            fullWidth
+                                            mt="md"
+                                            radius="md"
+                                            rightSection={<ExternalLink size={14} />}
+                                            onClick={() => logClick(item.title, item.link)}
+                                        >
+                                            Read More
+                                        </Button>
+                                    </Card>
+                                </motion.div>
+                            </Grid.Col>
+                        ))}
+                </Grid>
+            )}
 
-                <span className={styles.pageInfo}>페이지 {page}</span>
-
-                {/* Next page button - always show */}
-                <button
-                    onClick={() => goToPage(page + 1)}
-                    className={styles.pageBtn}
-                    title="다음 페이지"
-                >
-                    <ChevronRight size={16} />
-                </button>
-            </div>
-        </div>
+            {!error && !loading && news.length > 0 && (
+                <Group justify="center" mt="xl">
+                    <Button onClick={handlePrevPage} disabled={page === 1} variant="default">
+                        Previous
+                    </Button>
+                    <Text>Page {page}</Text>
+                    <Button onClick={handleNextPage} variant="default">
+                        Next
+                    </Button>
+                </Group>
+            )}
+        </Container>
     );
 }

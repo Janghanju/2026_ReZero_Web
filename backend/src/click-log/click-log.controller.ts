@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query } from '@nestjs/common';
 import { ClickLogService } from './click-log.service';
 import { IsNotEmpty, IsUrl } from 'class-validator';
 
@@ -24,6 +24,12 @@ export class ClickLogController {
     @Get('hot-topics')
     async getHotTopics() {
         const topics = await this.clickLogService.getHotTopics();
+        return { topics };
+    }
+    @Get('top')
+    async top(@Query('limit') limit: string) {
+        const n = Number(limit) || 5;
+        const topics = await this.clickLogService.getTopKeywords(n);
         return { topics };
     }
 }

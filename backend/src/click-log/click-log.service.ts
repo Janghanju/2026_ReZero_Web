@@ -53,4 +53,13 @@ export class ClickLogService {
 
         return hotTopics;
     }
+    async getTopKeywords(limit = 5): Promise<{ keyword: string; count: number }[]> {
+        const result = await this.prisma.clickLog.groupBy({
+            by: ['keyword'],
+            _count: { keyword: true },
+            orderBy: { _count: { keyword: 'desc' } },
+            take: limit,
+        });
+        return result.map((r) => ({ keyword: r.keyword, count: r._count.keyword }));
+    }
 }

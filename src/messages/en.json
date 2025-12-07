@@ -78,7 +78,10 @@
         "linkedin": "LinkedIn",
         "bio": "Embedded systems engineer with a passion for creating reliable, high‑performance firmware.",
         "address": "Address",
-        "addressValue": "Seoul, South Korea"
+        "addressValue": "Seoul, South Korea",
+        "inquiryTitle": "1:1 Inquiry",
+        "inquiryDescription": "Have a question? Send us a direct message.",
+        "goToInquiry": "Go to Inquiry"
     },
     "About": {
         "title": "About Me",

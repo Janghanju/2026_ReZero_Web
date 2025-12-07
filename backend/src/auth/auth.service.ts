@@ -36,12 +36,17 @@ export class AuthService {
 
     async register(email: string, pass: string, name: string) {
         const hashedPassword = await bcrypt.hash(pass, 10);
-        const user = await this.usersService.createUser({
-            email,
-            password: hashedPassword,
-            name,
-        });
-        return this.login(user);
+        try {
+            const user = await this.usersService.createUser({
+                email,
+                password: hashedPassword,
+                name,
+            });
+            return this.login(user);
+        } catch (error) {
+            console.error('Registration failed:', error);
+            throw error;
+        }
     }
 
     async seedAdmin() {
