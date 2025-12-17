@@ -9,17 +9,8 @@ import {
     AlertCircle,
     RefreshCw,
 } from 'lucide-react';
-import {
-    Card,
-    Text,
-    Badge,
-    Button,
-    Group,
-    Grid,
-    Skeleton,
-    Alert,
-    Container,
-} from '@mantine/core';
+import { Skeleton, Alert } from '@mantine/core'; // Keep Skeleton/Alert for now or replace with custom? Let's keep for simplicity but wrap in custom div
+import styles from '@/app/[locale]/news/news.module.css';
 
 interface NewsItem {
     id: string;
@@ -36,6 +27,7 @@ export default function NewsList() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
     // Click log function
@@ -60,7 +52,7 @@ export default function NewsList() {
             const contentType = res.headers.get('content-type');
             if (!contentType || !contentType.includes('application/json')) {
                 const txt = await res.text();
-                console.error('Received non-JSON response:', txt.substring(0, 200)); // Log first 200 chars
+                console.error('Received non-JSON response:', txt.substring(0, 200));
                 throw new Error('Server returned unexpected response (not JSON). Please try again later.');
             }
 
@@ -71,6 +63,7 @@ export default function NewsList() {
 
             const data = await res.json();
             setNews(data.news || []);
+            setTotalPages(data.totalPages || 1);
             setLastUpdated(new Date());
         } catch (err: any) {
             console.error('Fetch error:', err);
@@ -86,95 +79,110 @@ export default function NewsList() {
         return () => clearInterval(interval);
     }, [page]);
 
-    const handleNextPage = () => setPage((p) => p + 1);
+    const handleNextPage = () => setPage((p) => Math.min(totalPages, p + 1));
     const handlePrevPage = () => setPage((p) => Math.max(1, p - 1));
 
     return (
-        <Container size="xl" py="xl">
-            <Group justify="space-between" mb="lg">
-                <Text size="sm" c="dimmed">
+        <div className={styles.feed}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', color: 'var(--muted-foreground)', fontSize: '0.9rem' }}>
+                <span>
                     {lastUpdated && `${t('lastUpdated')}: ${lastUpdated.toLocaleTimeString()}`}
-                </Text>
-                <Button
-                    variant="light"
-                    leftSection={<RefreshCw size={16} />}
+                </span>
+                <button
                     onClick={() => fetchNews(page)}
-                    loading={loading}
+                    className={styles.actionBtn}
+                    disabled={loading}
                 >
-                    {t('refresh')}
-                </Button>
-            </Group>
+                    <RefreshCw size={14} /> {t('refresh')}
+                </button>
+            </div>
 
             {error ? (
                 <Alert icon={<AlertCircle size={16} />} title="Connection Error" color="red" variant="filled">
                     {error}
                 </Alert>
             ) : (
-                <Grid>
+                <>
                     {loading && news.length === 0
-                        ? Array(6)
-                            .fill(0)
-                            .map((_, i) => (
-                                <Grid.Col key={i} span={{ base: 12, md: 6, lg: 4 }}>
-                                    <Skeleton height={200} radius="md" />
-                                </Grid.Col>
-                            ))
+                        ? Array(6).fill(0).map((_, i) => (
+                            <div key={i} className={styles.card} style={{ height: '200px', opacity: 0.5 }}>
+                                <Skeleton height={20} radius="md" mb="sm" />
+                                <Skeleton height={100} radius="md" />
+                            </div>
+                        ))
                         : news.map((item, idx) => (
-                            <Grid.Col key={item.id || idx} span={{ base: 12, md: 6, lg: 4 }}>
-                                <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.3, delay: idx * 0.1 }}
-                                >
-                                    <Card shadow="sm" padding="lg" radius="md" withBorder h="100%" style={{ display: 'flex', flexDirection: 'column' }}>
-                                        <Group justify="space-between" mt="md" mb="xs">
-                                            <Badge color="pink" variant="light">
-                                                {item.source || 'News'}
-                                            </Badge>
-                                            <Group gap={4}>
-                                                <Clock size={14} color="gray" />
-                                                <Text size="xs" c="dimmed">
-                                                    {item.timeAgo}
-                                                </Text>
-                                            </Group>
-                                        </Group>
+                            <motion.div
+                                key={item.id || idx}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3, delay: idx * 0.05 }}
+                            >
+                                <div className={styles.card}>
+                                    <div className={styles.cardHeader}>
+                                        <h2 className={styles.cardTitle}>
+                                            <a href={item.link} target="_blank" rel="noopener noreferrer" onClick={() => logClick(item.title, item.link)}>
+                                                {item.title}
+                                            </a>
+                                        </h2>
+                                    </div>
 
-                                        <Text fw={500} size="lg" mt="md" style={{ flex: 1 }}>
-                                            {item.title}
-                                        </Text>
+                                    <div className={styles.cardMeta}>
+                                        <span className={styles.sourceTag}>{item.source || 'GeekNews'}</span>
+                                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                            <Clock size={14} /> {item.timeAgo}
+                                        </span>
+                                    </div>
 
-                                        <Button
-                                            component="a"
-                                            href={item.link}
-                                            target="_blank"
-                                            variant="light"
-                                            color="blue"
-                                            fullWidth
-                                            mt="md"
-                                            radius="md"
-                                            rightSection={<ExternalLink size={14} />}
-                                            onClick={() => logClick(item.title, item.link)}
+                                    {item.summary && (
+                                        <p className={styles.summary}>
+                                            {item.summary}
+                                        </p>
+                                    )}
+
+                                    <div className={styles.cardFooter}>
+                                        <button
+                                            className={styles.actionBtn}
+                                            onClick={() => {
+                                                logClick(item.title, item.link);
+                                                window.open(item.link, '_blank');
+                                            }}
                                         >
-                                            Read More
-                                        </Button>
-                                    </Card>
-                                </motion.div>
-                            </Grid.Col>
+                                            Read Article <ExternalLink size={14} />
+                                        </button>
+                                    </div>
+                                </div>
+                            </motion.div>
                         ))}
-                </Grid>
+                </>
             )}
 
             {!error && !loading && news.length > 0 && (
-                <Group justify="center" mt="xl">
-                    <Button onClick={handlePrevPage} disabled={page === 1} variant="default">
-                        Previous
-                    </Button>
-                    <Text>Page {page}</Text>
-                    <Button onClick={handleNextPage} variant="default">
-                        Next
-                    </Button>
-                </Group>
+                <div className={styles.pagination}>
+                    <button
+                        onClick={handlePrevPage}
+                        disabled={page === 1}
+                        className={styles.pageBtn}
+                        aria-label="Previous Page"
+                    >
+                        ←
+                    </button>
+                    <span className={styles.pageInfo}>{page} / {totalPages}</span>
+                    <button
+                        onClick={handleNextPage}
+                        disabled={page >= totalPages}
+                        className={styles.pageBtn}
+                        aria-label="Next Page"
+                        style={{ display: page >= totalPages ? 'none' : 'flex' }}
+                    >
+                        →
+                    </button>
+                    {page >= totalPages && (
+                        <span style={{ marginLeft: '1rem', color: 'var(--muted-foreground)', fontSize: '0.9rem' }}>
+                            Last Page
+                        </span>
+                    )}
+                </div>
             )}
-        </Container>
+        </div>
     );
 }

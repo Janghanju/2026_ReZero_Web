@@ -3,7 +3,7 @@
 import { Navbar } from "@/components/navbar";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { useTranslations } from 'next-intl';
-import { ExternalLink, Github } from "lucide-react";
+import { ExternalLink, Github, Briefcase } from "lucide-react";
 import Link from "next/link";
 import { MotionCard } from "@/components/ui/motion-card";
 import { MotionContainer } from "@/components/ui/motion-container";
@@ -13,64 +13,64 @@ export default function PortfolioPage() {
 
     const projects = [
         {
-            title: "One Week Web",
-            desc: "Next.js 14 Portfolio & News Aggregator",
+            title: t('project1Title'),
+            desc: t('project1Desc'),
             tags: ["Next.js", "TypeScript", "NextAuth", "i18n"],
             link: "#",
             github: "#"
         },
         {
-            title: "AI Chat Agent",
-            desc: "Conversational AI interface with RAG support",
+            title: t('project2Title'),
+            desc: t('project2Desc'),
             tags: ["React", "Python", "LangChain", "OpenAI"],
             link: "#",
             github: "#"
         },
         {
-            title: "E-Commerce Dashboard",
-            desc: "Admin panel for managing products and orders",
+            title: t('project3Title'),
+            desc: t('project3Desc'),
             tags: ["Vue.js", "Firebase", "Tailwind"],
             link: "#",
             github: "#"
         },
         {
-            title: "Real-time Analytics Platform",
-            desc: "Live data visualization and business intelligence dashboard",
+            title: t('project4Title'),
+            desc: t('project4Desc'),
             tags: ["React", "D3.js", "WebSocket", "Node.js"],
             link: "#",
             github: "#"
         },
         {
-            title: "Blockchain Wallet App",
-            desc: "Secure cryptocurrency wallet with multi-chain support",
+            title: t('project5Title'),
+            desc: t('project5Desc'),
             tags: ["React Native", "Web3.js", "Ethereum", "Solana"],
             link: "#",
             github: "#"
         },
         {
-            title: "IoT Monitoring System",
-            desc: "Real-time sensor data collection and analysis platform",
+            title: t('project6Title'),
+            desc: t('project6Desc'),
             tags: ["Python", "MQTT", "InfluxDB", "Grafana"],
             link: "#",
             github: "#"
         },
         {
-            title: "AI-Powered Chatbot",
-            desc: "Custom chatbot with NLP capabilities for customer support.",
+            title: t('project7Title'),
+            desc: t('project7Desc'),
             tags: ["Node.js", "TensorFlow", "Dialogflow", "AWS"],
             link: "#",
             github: "#"
         },
         {
-            title: "E-Learning Platform",
-            desc: "Scalable online education platform with video streaming and quizzes.",
+            title: t('project8Title'),
+            desc: t('project8Desc'),
             tags: ["React", "Next.js", "Stripe", "MongoDB"],
             link: "#",
             github: "#"
         },
         {
-            title: "BioTech Platform",
-            desc: "Scalable online education platform with video streaming and quizzes.",
+            title: t('project9Title'),
+            desc: t('project9Desc'),
             tags: ["React", "Next.js", "Stripe", "MongoDB"],
             link: "#",
             github: "#"
@@ -83,7 +83,20 @@ export default function PortfolioPage() {
             <Navbar />
 
             <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '8rem 2rem 4rem', position: 'relative', zIndex: 1 }}>
-                <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+                <div style={{ textAlign: 'center', marginBottom: '4rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div style={{
+                        width: '80px',
+                        height: '80px',
+                        background: 'linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)',
+                        borderRadius: '24px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: '1.5rem',
+                        boxShadow: '0 10px 25px rgba(236, 72, 153, 0.3)'
+                    }}>
+                        <Briefcase size={40} color="white" />
+                    </div>
                     <h1 style={{
                         fontSize: '3rem',
                         fontWeight: 800,

@@ -17,6 +17,7 @@ model News {
   source    String
   url       String   @unique
   createdAt DateTime @default(now())
+  comments  Comment[]
 }
 
 enum Role {
@@ -35,6 +36,7 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   inquiries     Inquiry[]
+  comments      Comment[]
 }
 
 model Inquiry {
@@ -53,5 +55,21 @@ model ClickLog {
   id        Int      @id @default(autoincrement())
   keyword   String
   url       String
+  createdAt DateTime @default(now())
+}
+
+model Subscription {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  newsId    Int
+  news      News     @relation(fields: [newsId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }

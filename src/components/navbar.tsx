@@ -4,8 +4,10 @@ import { Link, usePathname, useRouter } from '@/i18n/routing';
 import { Menu, X, Globe, Moon, Sun } from 'lucide-react';
 import { useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
+import { useSession } from "next-auth/react";
 
 export function Navbar() {
+    const { data: session } = useSession();
     const [isOpen, setIsOpen] = useState(false);
     const pathname = usePathname();
     const router = useRouter();
@@ -69,19 +71,45 @@ export function Navbar() {
                         <Globe size={20} />
                     </button>
 
-                    <Link
-                        href="/login"
-                        style={{
-                            padding: '0.5rem 1.2rem',
-                            background: 'var(--primary)',
-                            color: 'white',
-                            borderRadius: '999px',
-                            fontWeight: 600,
-                            fontSize: '0.9rem'
-                        }}
-                    >
-                        {t('login')}
-                    </Link>
+                    {session ? (
+                        <Link
+                            href="/profile"
+                            style={{
+                                padding: '0.5rem 1.2rem',
+                                background: 'rgba(59, 130, 246, 0.1)',
+                                color: 'var(--primary)',
+                                borderRadius: '999px',
+                                fontWeight: 600,
+                                fontSize: '0.9rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem'
+                            }}
+                        >
+                            {session.user?.image ? (
+                                <img src={session.user.image} alt="Profile" style={{ width: 24, height: 24, borderRadius: '50%' }} />
+                            ) : (
+                                <span style={{ width: 24, height: 24, borderRadius: '50%', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem' }}>
+                                    {session.user?.name?.[0]?.toUpperCase() || 'U'}
+                                </span>
+                            )}
+                            {session.user?.name || 'Profile'}
+                        </Link>
+                    ) : (
+                        <Link
+                            href="/login"
+                            style={{
+                                padding: '0.5rem 1.2rem',
+                                background: 'var(--primary)',
+                                color: 'white',
+                                borderRadius: '999px',
+                                fontWeight: 600,
+                                fontSize: '0.9rem'
+                            }}
+                        >
+                            {t('login')}
+                        </Link>
+                    )}
                 </div>
 
                 {/* Mobile Menu Button */}

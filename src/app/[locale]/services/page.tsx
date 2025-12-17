@@ -10,15 +10,15 @@ export default function ServicesPage() {
     const t = useTranslations('Services');
 
     const services = [
-        { icon: <Globe size={40} color="var(--primary)" />, title: 'Web Development', desc: 'High-performance, responsive websites built with Next.js.', color: 'var(--primary)', features: ['Next.js 14+', 'SEO Optimization', 'Performance Tuning'] },
-        { icon: <Smartphone size={40} color="var(--accent)" />, title: 'App Development', desc: 'Cross-platform mobile apps using React Native.', color: 'var(--accent)', features: ['React Native', 'iOS & Android', 'Native Modules'] },
-        { icon: <Zap size={40} color="#fbbf24" />, title: 'Tech Consulting', desc: 'Expert advice on your tech stack and architecture.', color: '#fbbf24', features: ['Architecture Design', 'Code Review', 'Tech Stack Selection'] },
-        { icon: <Brain size={40} color="#8b5cf6" />, title: 'AI/ML Integration', desc: 'Intelligent systems powered by machine learning.', color: '#8b5cf6', features: ['Model Training', 'API Integration', 'Data Analysis'] },
-        { icon: <Cloud size={40} color="#06b6d4" />, title: 'Cloud & DevOps', desc: 'Scalable cloud infrastructure and automated pipelines.', color: '#06b6d4', features: ['AWS/Azure/GCP', 'Docker/Kubernetes', 'CI/CD Pipelines'] },
-        { icon: <Code size={40} color="#10b981" />, title: 'API Development', desc: 'RESTful and GraphQL APIs with modern authentication.', color: '#10b981', features: ['REST/GraphQL', 'OAuth/JWT', 'API Documentation'] },
-        { icon: <Database size={40} color="#f59e0b" />, title: 'Database Design', desc: 'Efficient database architecture for SQL and NoSQL.', color: '#f59e0b', features: ['PostgreSQL/MySQL', 'MongoDB/Redis', 'Schema Optimization'] },
-        { icon: <Palette size={40} color="#ec4899" />, title: 'UI/UX Design', desc: 'Beautiful, intuitive interfaces that users love.', color: '#ec4899', features: ['Figma/Sketch', 'User Research', 'Prototyping'] },
-        { icon: <Shield size={40} color="#ef4444" />, title: 'Cybersecurity', desc: 'Secure your applications with modern security practices.', color: '#ef4444', features: ['Penetration Testing', 'Secure Code Review', 'Compliance Audits'] }
+        { icon: <Globe size={40} color="var(--primary)" />, title: t('webDevTitle'), desc: t('webDevDesc'), color: 'var(--primary)', features: [t('webDevFeature1'), t('webDevFeature2'), t('webDevFeature3')] },
+        { icon: <Smartphone size={40} color="var(--accent)" />, title: t('appDevTitle'), desc: t('appDevDesc'), color: 'var(--accent)', features: [t('appDevFeature1'), t('appDevFeature2'), t('appDevFeature3')] },
+        { icon: <Zap size={40} color="#fbbf24" />, title: t('consultingTitle'), desc: t('consultingDesc'), color: '#fbbf24', features: [t('consultingFeature1'), t('consultingFeature2'), t('consultingFeature3')] },
+        { icon: <Brain size={40} color="#8b5cf6" />, title: t('aiTitle'), desc: t('aiDesc'), color: '#8b5cf6', features: [t('aiFeature1'), t('aiFeature2'), t('aiFeature3')] },
+        { icon: <Cloud size={40} color="#06b6d4" />, title: t('cloudTitle'), desc: t('cloudDesc'), color: '#06b6d4', features: [t('cloudFeature1'), t('cloudFeature2'), t('cloudFeature3')] },
+        { icon: <Code size={40} color="#10b981" />, title: t('apiTitle'), desc: t('apiDesc'), color: '#10b981', features: [t('apiFeature1'), t('apiFeature2'), t('apiFeature3')] },
+        { icon: <Database size={40} color="#f59e0b" />, title: t('dbTitle'), desc: t('dbDesc'), color: '#f59e0b', features: [t('dbFeature1'), t('dbFeature2'), t('dbFeature3')] },
+        { icon: <Palette size={40} color="#ec4899" />, title: t('uiTitle'), desc: t('uiDesc'), color: '#ec4899', features: [t('uiFeature1'), t('uiFeature2'), t('uiFeature3')] },
+        { icon: <Shield size={40} color="#ef4444" />, title: t('securityTitle'), desc: t('securityDesc'), color: '#ef4444', features: [t('securityFeature1'), t('securityFeature2'), t('securityFeature3')] }
     ];
 
     return (
@@ -26,7 +26,20 @@ export default function ServicesPage() {
             <AnimatedBackground />
             <Navbar />
             <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '8rem 2rem 4rem', position: 'relative', zIndex: 1 }}>
-                <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+                <div style={{ textAlign: 'center', marginBottom: '4rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div style={{
+                        width: '80px',
+                        height: '80px',
+                        background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
+                        borderRadius: '24px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: '1.5rem',
+                        boxShadow: '0 10px 25px rgba(251, 191, 36, 0.3)'
+                    }}>
+                        <Zap size={40} color="white" />
+                    </div>
                     <h1 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '1rem', background: 'linear-gradient(to right, var(--primary), var(--accent))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{t('title')}</h1>
                     <p style={{ color: 'var(--muted-foreground)', fontSize: '1.2rem' }}>{t('subtitle')}</p>
                 </div>
